@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import fs from "fs";
-import markdownIt from "markdown-it";
+
 
 type Post = {
   content: string;
