@@ -22,18 +22,21 @@ export async function POST(req: NextRequest) {
       language: language,
       details: details,
     };
-   
+
+    let test:any;
     // write file
     if (typeof data.content === "string") {
-      fs.writeFileSync(`${data.slug}.md`, data.content, "utf-8");
+      test = fs.writeFileSync(`${data.slug}.md`, data.content, "utf-8");
     }
 
-    // write to database
+    test.on('finish', async function () {
+          // write to database
     const now = new Date();
     const day = String(now.getDate()).padStart(2, '0');
     const month = String(now.getMonth() + 1).padStart(2, '0'); 
     const year = now.getFullYear();
     const date_now = `${day}/${month}/${year}`;
+
     setDoc(doc(db, "blogs", data.slug), {
       date: date_now,
       details: data.details,
@@ -55,6 +58,10 @@ export async function POST(req: NextRequest) {
     fs.unlinkSync(`./${data.slug}.md`);
 
     return NextResponse.json({ success: true });
+    })
+    
+
+
   } catch (error) {
     console.error("Hata oluştu:", error);
     return NextResponse.json({ success: false, error: "Bir hata oluştu." });
