@@ -1,33 +1,82 @@
-'use client';
-import { useState, FormEvent } from 'react';
+"use client";
+
+
+import { useState, FormEvent } from "react";
 
 export default function Home() {
-  const [textareaValue, setTextareaValue] = useState('');
+  const [textareaValue, setTextareaValue] = useState("");
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [language, setLanguage] = useState("");
+
+
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    alert('A name was submitted: ' + textareaValue);
     try {
-      const response = await fetch('/api/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content: textareaValue }),
+
+      const formData= new FormData();
+      formData.append("content", textareaValue);
+      formData.append("title", title);
+      formData.append("slug", slug);
+      formData.append("language", language);
+
+
+      const response = await fetch("/api/create", {
+        method: "POST",
+        body: formData,
       });
+
     } catch (error) {
-      console.error('İstek sırasında bir hata oluştu:', error);
+      console.error("İstek sırasında bir hata oluştu:", error);
     }
   };
 
-  const handleTextareaChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleTextareaChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setTextareaValue(event.target.value);
   };
+  
 
   return (
-    <main className="">
+    <main className="bg-slate-100">
       Home
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <label htmlFor="message">Title:</label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          value={title}
+          onChange={(event) => {
+            setTitle(event.target.value);
+          }}
+        />
+        <br />
+        <label htmlFor="slug">Slug:</label>
+        <input
+          type="text"
+          id="slug"
+          name="slug"
+          value={slug}
+          onChange={(event) => {
+            setSlug(event.target.value);
+          }}
+        />
+        <br />
+        <label htmlFor="message">Language(tr,en etc.):</label>
+        <input
+          type="text"
+          id="language"
+          name="language"
+          value={language}
+          onChange={(event) => {
+            setLanguage(event.target.value);
+          }}
+        />
+        <br />
+        
         <textarea
           cols={100}
           rows={10}
@@ -36,6 +85,7 @@ export default function Home() {
           value={textareaValue}
           onChange={handleTextareaChange}
         ></textarea>
+
         <button type="submit">Submit</button>
       </form>
     </main>
