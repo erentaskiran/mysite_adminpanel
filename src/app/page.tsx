@@ -8,7 +8,7 @@ export default function Home() {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [language, setLanguage] = useState("");
-
+  const [details, setDetails] = useState("");
 
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -20,7 +20,7 @@ export default function Home() {
       formData.append("title", title);
       formData.append("slug", slug);
       formData.append("language", language);
-
+      formData.append("details", details);
 
       const response = await fetch("/api/create", {
         method: "POST",
@@ -76,7 +76,11 @@ export default function Home() {
           }}
         />
         <br />
-        
+        <label htmlFor="details">Details:</label>
+        <input type="text" id="details" name="details" value={details}  onChange={(event) => {
+            setDetails(event.target.value);
+          }}/>
+        <br />
         <textarea
           cols={100}
           rows={10}

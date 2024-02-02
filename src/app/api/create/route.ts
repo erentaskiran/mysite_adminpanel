@@ -13,12 +13,14 @@ export async function POST(req: NextRequest) {
     const title = formData.get("title") as string;
     const content = formData.get("content") as string;
     const language = formData.get("language") as string;
+    const details = formData.get("details") as string;
 
     const data = {
       slug: slug,
       title: title,
       content: content,
       language: language,
+      details: details,
     };
    
     // write file
@@ -29,11 +31,12 @@ export async function POST(req: NextRequest) {
     // write to database
     const now = new Date();
     setDoc(doc(db, "blogs", data.slug), {
-      content: data.content,
-      title: data.title,
-      slug: data.slug,
       date: now,
+      details: data.details,
+      image: "default",
       lang: data.language,
+      slug: data.slug,
+      title: data.title,
     });
 
     // write to storage
