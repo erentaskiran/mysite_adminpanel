@@ -22,7 +22,7 @@ export default function Home() {
       formData.append("language", language);
       formData.append("details", details);
 
-      const response = await fetch("/api/create", {
+      const response = await fetch("https://mysite-adminpanel.vercel.app/api/create", {
         method: "POST",
         body: formData,
       });

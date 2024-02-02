@@ -60,6 +60,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: "Bir hata oluştu." });
   }
 }
-function getDate(): any {
-  throw new Error("Function not implemented.");
-}
