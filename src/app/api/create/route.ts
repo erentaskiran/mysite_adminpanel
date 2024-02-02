@@ -30,10 +30,10 @@ export async function POST(req: NextRequest) {
 
     // write to database
     const now = new Date();
-    const gun = String(now.getDate()).padStart(2, '0');
-    const ay = String(now.getMonth() + 1).padStart(2, '0'); // Ay 0 ile başlar, bu nedenle +1 ekliyoruz.
-    const yil = now.getFullYear();
-    const date_now = `${gun}/${ay}/${yil}`;
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); 
+    const year = now.getFullYear();
+    const date_now = `${day}/${month}/${year}`;
     setDoc(doc(db, "blogs", data.slug), {
       date: date_now,
       details: data.details,
