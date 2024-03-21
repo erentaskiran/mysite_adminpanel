@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
 import { doc, setDoc } from "firebase/firestore";
 import { db, storage } from "../../../../fireabse";
 import { ref, uploadBytes } from "firebase/storage";
+import multer from "multer";
+import fs from "fs";
 
+// Set up multer to store uploaded files in memory
+const upload = multer({ storage: multer.memoryStorage() });
 
 export async function POST(req: NextRequest) {
-
   try {
     const formData = await req.formData();
     const slug = formData.get("slug") as string;
@@ -14,54 +16,51 @@ export async function POST(req: NextRequest) {
     const content = formData.get("content") as string;
     const language = formData.get("language") as string;
     const details = formData.get("details") as string;
+    const image = formData.get("image") as File;
 
-    const data = {
-      slug: slug,
-      title: title,
-      content: content,
-      language: language,
-      details: details,
-    };
-
-    let test:any;
-    // write file
-    if (typeof data.content === "string") {
-      test = fs.writeFileSync(`${data.slug}.md`, data.content, "utf-8");
+    //write md
+    if (typeof content === "string") {
+      fs.writeFileSync(`${slug}.md`, content, "utf-8");
     }
 
-    test.on('finish', async function () {
-          // write to database
+    // write image and upload firebase
+    if (image) {
+      const filePath = `images/${slug}.jpg`;
+      const blogRef = ref(storage, filePath);
+      const metadata = {
+        contentType: "image/jpeg",
+      };
+      await uploadBytes(blogRef, image, metadata);
+    }
+
+    // write to database
     const now = new Date();
-    const day = String(now.getDate()).padStart(2, '0');
-    const month = String(now.getMonth() + 1).padStart(2, '0'); 
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0");
     const year = now.getFullYear();
     const date_now = `${day}/${month}/${year}`;
 
-    setDoc(doc(db, "blogs", data.slug), {
+    setDoc(doc(db, "blogs", slug), {
       date: date_now,
-      details: data.details,
-      image: "default.jpg",
-      lang: data.language,
-      slug: data.slug,
-      title: data.title,
+      details: details,
+      image: `${slug}.jpg`,
+      lang: language,
+      slug: slug,
+      title: title,
     });
 
     // write to storage
-    const filePath = `blogs/${data.slug}.md`;
+    const filePath = `blogs/${slug}.md`;
     const blogRef = ref(storage, filePath);
     const metadata = {
       contentType: "text/plain",
     };
-    await uploadBytes(blogRef, fs.readFileSync(`${data.slug}.md`), metadata);
+    await uploadBytes(blogRef, fs.readFileSync(`${slug}.md`), metadata);
 
     // delete file
-    fs.unlinkSync(`./${data.slug}.md`);
+    fs.unlinkSync(`./${slug}.md`);
 
     return NextResponse.json({ success: true });
-    })
-    
-
-
   } catch (error) {
     console.error("Hata oluştu:", error);
     return NextResponse.json({ success: false, error: "Bir hata oluştu." });

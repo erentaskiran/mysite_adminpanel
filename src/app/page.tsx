@@ -3,13 +3,16 @@
 
 import { useState, FormEvent } from "react";
 
+
+import { db, storage } from "../../fireabse";
+
 export default function Home() {
   const [textareaValue, setTextareaValue] = useState("");
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [language, setLanguage] = useState("");
   const [details, setDetails] = useState("");
-
+  const [image, setImage] = useState(null);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -21,8 +24,9 @@ export default function Home() {
       formData.append("slug", slug);
       formData.append("language", language);
       formData.append("details", details);
+      formData.append('image', image);
 
-      const response = await fetch("https://mysite-adminpanel.vercel.app/api/create", {
+      const response = await fetch("http://localhost:3000/api/create", {
         method: "POST",
         body: formData,
       });
@@ -79,6 +83,11 @@ export default function Home() {
         <label htmlFor="details">Details:</label>
         <input type="text" id="details" name="details" value={details}  onChange={(event) => {
             setDetails(event.target.value);
+          }}/>
+        <br />
+        <label htmlFor="image">Image:</label>
+        <input type="file" id="image" name="image" onChange={(event) => {
+            setImage(event.target.files[0]);
           }}/>
         <br />
         <textarea
