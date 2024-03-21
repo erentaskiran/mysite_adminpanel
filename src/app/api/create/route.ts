@@ -41,12 +41,12 @@ export async function POST(req: NextRequest) {
     const date_now = `${day}/${month}/${year}`;
 
     setDoc(doc(db, "blogs", slug), {
+      title: title,
+      slug: slug,
       date: date_now,
       details: details,
       image: `${slug}.jpg`,
       lang: language,
-      slug: slug,
-      title: title,
     });
 
     // write to storage
